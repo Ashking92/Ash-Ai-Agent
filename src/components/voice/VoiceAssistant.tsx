@@ -1,4 +1,3 @@
-
 import { useCallback, useState, useEffect } from 'react';
 import { Mic, MicOff, Volume2, VolumeX, Power, X } from 'lucide-react';
 import { useConversation } from '@11labs/react';
@@ -42,7 +41,6 @@ const VoiceAssistant = ({ agentId, apiKey, className }: VoiceAssistantProps) => 
   const [isPoweredOn, setIsPoweredOn] = useState(true);
   const [isActive, setIsActive] = useState(false);
 
-  // Use the conversation hook from @11labs/react
   const conversation = useConversation({
     onConnect: () => {
       console.log('Connected to ElevenLabs');
@@ -58,17 +56,14 @@ const VoiceAssistant = ({ agentId, apiKey, className }: VoiceAssistantProps) => 
     onMessage: (message) => {
       console.log('Message received:', message);
       
-      // Handle different message types based on the ElevenLabs API structure
       if (typeof message === 'object' && message !== null) {
         if ('type' in message) {
-          const typedMessage = message as any; // Type assertion for flexibility
+          const typedMessage = message as any;
           
           if (typedMessage.type === 'agentResponse') {
-            // Set a random emotion for the AI response
             const emotion = getRandomEmotion();
             setCurrentEmotion(emotion);
             
-            // Update streaming text for real-time display
             setStreamingText(prev => prev + (typedMessage.text || ''));
             setSubtitleText(typedMessage.text || '');
           } 
@@ -76,7 +71,6 @@ const VoiceAssistant = ({ agentId, apiKey, className }: VoiceAssistantProps) => 
             const transcribedText = typedMessage.text || '';
             setUserMessage(transcribedText);
             
-            // Add user message to chat history
             if (transcribedText) {
               setChatHistory(prev => [...prev, {
                 text: transcribedText,
@@ -88,7 +82,6 @@ const VoiceAssistant = ({ agentId, apiKey, className }: VoiceAssistantProps) => 
             setSubtitleText('Listening...');
           } 
           else if (typedMessage.type === 'agentResponseFinished') {
-            // Add assistant response to chat history with emotion
             setChatHistory(prev => [...prev, {
               text: streamingText,
               isUser: false,
@@ -96,7 +89,6 @@ const VoiceAssistant = ({ agentId, apiKey, className }: VoiceAssistantProps) => 
               emotion: currentEmotion
             }]);
             
-            // Reset streaming text
             setStreamingText('');
             
             setTimeout(() => {
@@ -105,7 +97,6 @@ const VoiceAssistant = ({ agentId, apiKey, className }: VoiceAssistantProps) => 
           }
         } 
         else if ('message' in message) {
-          // Handle standard message format
           const messageStr = typeof message.message === 'string' ? message.message : '';
           setSubtitleText(messageStr);
         }
@@ -113,7 +104,12 @@ const VoiceAssistant = ({ agentId, apiKey, className }: VoiceAssistantProps) => 
     },
     onError: (error) => {
       console.error('Error in conversation:', error);
-      setSubtitleText('Error: ' + (error && typeof error === 'object' && 'message' in error ? (error as any).message : 'An error occurred'));
+      
+      const errorMessage = error && typeof error === 'object' && 'message' in error 
+        ? (error as { message: string }).message 
+        : 'An unexpected error occurred';
+      
+      setSubtitleText(`Error: ${errorMessage}`);
     }
   });
 
@@ -156,20 +152,17 @@ const VoiceAssistant = ({ agentId, apiKey, className }: VoiceAssistantProps) => 
   return (
     <div className={`voice-assistant-container flex flex-col items-center ${className || ''}`}>
       <div className="w-full max-w-xl mx-auto flex flex-col items-center min-h-[600px] bg-black/95 rounded-3xl overflow-hidden relative">
-        {/* Circular visualization */}
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full border border-blue-400/30 flex items-center justify-center">
           {isPoweredOn && (
             <>
               <div className={`w-64 h-64 rounded-full ${isActive ? 'bg-gradient-to-b from-blue-400/20 to-blue-600/50' : 'bg-blue-900/20'} flex items-center justify-center`}>
                 {conversation.isSpeaking ? (
-                  // Speaking state - animate the circle
                   <div className="w-52 h-52 rounded-full bg-gradient-to-b from-blue-300 to-blue-600 animate-pulse flex items-center justify-center overflow-hidden">
                     <div className="text-white text-center p-4 max-w-full overflow-hidden">
                       {streamingText ? streamingText : subtitleText}
                     </div>
                   </div>
                 ) : (
-                  // Idle state - static circle
                   <div className="w-52 h-52 rounded-full bg-gradient-to-b from-blue-400/40 to-blue-600/70 flex items-center justify-center overflow-hidden">
                     <div className="text-white/90 text-center p-4 max-w-full overflow-hidden text-sm">
                       {subtitleText || 'Tap to speak'}
@@ -186,9 +179,7 @@ const VoiceAssistant = ({ agentId, apiKey, className }: VoiceAssistantProps) => 
           )}
         </div>
 
-        {/* Control buttons */}
         <div className="w-full p-4 flex items-center justify-center gap-5 mt-auto mb-12">
-          {/* Power button */}
           <button 
             className="w-14 h-14 rounded-full bg-gray-800 flex items-center justify-center text-white border border-gray-700 hover:bg-gray-700 transition-colors"
             onClick={togglePower}
@@ -197,7 +188,6 @@ const VoiceAssistant = ({ agentId, apiKey, className }: VoiceAssistantProps) => 
             <Power size={24} className={isPoweredOn ? "text-red-500" : "text-green-500"} />
           </button>
           
-          {/* Mute button */}
           <button 
             className={`w-14 h-14 rounded-full bg-gray-800 flex items-center justify-center text-white border border-gray-700 hover:bg-gray-700 transition-colors ${!isPoweredOn ? 'opacity-50 cursor-not-allowed' : ''}`}
             onClick={toggleMute}
@@ -207,7 +197,6 @@ const VoiceAssistant = ({ agentId, apiKey, className }: VoiceAssistantProps) => 
             {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
           </button>
           
-          {/* End conversation button */}
           <button 
             className={`w-14 h-14 rounded-full bg-gray-800 flex items-center justify-center text-white border border-gray-700 hover:bg-gray-700 transition-colors ${!isPoweredOn || conversation.status !== 'connected' ? 'opacity-50 cursor-not-allowed' : ''}`}
             onClick={stopConversation}
