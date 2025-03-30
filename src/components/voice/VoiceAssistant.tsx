@@ -1,3 +1,4 @@
+
 import { useCallback, useState, useEffect } from 'react';
 import { Mic, MicOff, Volume2, VolumeX, Power, X } from 'lucide-react';
 import { useConversation } from '@11labs/react';
@@ -105,8 +106,9 @@ const VoiceAssistant = ({ agentId, apiKey, className }: VoiceAssistantProps) => 
     onError: (error) => {
       console.error('Error in conversation:', error);
       
+      // Fix for TS18047: Handle the case where error is null
       const errorMessage = error && typeof error === 'object' && 'message' in error 
-        ? (error as { message: string }).message 
+        ? String((error as { message: unknown }).message) 
         : 'An unexpected error occurred';
       
       setSubtitleText(`Error: ${errorMessage}`);
