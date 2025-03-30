@@ -2,7 +2,6 @@
 import { MainLayout } from "@/components/layout/MainLayout";
 import VoiceAssistant from "@/components/voice/VoiceAssistant";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Globe } from "lucide-react";
 
@@ -15,24 +14,24 @@ const Index = () => {
 
   return (
     <MainLayout>
-      <div className="flex flex-col items-center min-h-[80vh] justify-center bg-gradient-to-b from-indigo-50 via-purple-50 to-pink-50 py-8">
+      <div className="flex flex-col items-center min-h-[80vh] justify-center py-8">
         <section className="text-center mb-6">
-          <h1 className="text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-blue-500">
-            {language === 'hindi' ? 'दादी माँ AI' : 'Grand AI'}
+          <h1 className="text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-300">
+            Ash
           </h1>
-          <p className="text-lg max-w-xs mx-auto text-gray-600">
-            {language === 'hindi' ? 'आपका सहायक और आपका मित्र' : 'Your assistant and Your friend'}
+          <p className="text-lg max-w-xs mx-auto text-blue-200">
+            {language === 'hindi' ? 'आपका सहायक और आपका मित्र' : 'Your assistant and friend'}
           </p>
           
           {/* Language Toggle */}
           <div className="flex items-center justify-center mt-4">
-            <div className="flex items-center bg-white/50 p-1 rounded-full border border-purple-100">
-              <Globe size={16} className="text-purple-500 mx-2" />
+            <div className="flex items-center bg-blue-900/30 p-1 rounded-full border border-blue-500/30">
+              <Globe size={16} className="text-blue-400 mx-2" />
               <ToggleGroup type="single" value={language} onValueChange={(val) => val && setLanguage(val as 'english' | 'hindi')}>
-                <ToggleGroupItem value="english" className="text-sm rounded-full px-3 py-1">
+                <ToggleGroupItem value="english" className="text-sm rounded-full px-3 py-1 data-[state=on]:bg-blue-700 data-[state=on]:text-white">
                   English
                 </ToggleGroupItem>
-                <ToggleGroupItem value="hindi" className="text-sm rounded-full px-3 py-1">
+                <ToggleGroupItem value="hindi" className="text-sm rounded-full px-3 py-1 data-[state=on]:bg-blue-700 data-[state=on]:text-white">
                   हिंदी
                 </ToggleGroupItem>
               </ToggleGroup>
@@ -41,10 +40,10 @@ const Index = () => {
         </section>
 
         <section className="w-full max-w-lg px-4">
-          <div className="bg-white/40 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden border border-purple-100">
-            <div className="py-3 px-4 bg-gradient-to-r from-purple-500 to-blue-500 text-white flex items-center">
+          <div className="bg-black/60 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden border border-blue-500/30">
+            <div className="py-3 px-4 bg-gradient-to-r from-blue-700 to-cyan-700 text-white flex items-center">
               <span className="text-sm font-medium">
-                {language === 'hindi' ? 'इंटरएक्टिव डेमो' : 'Interactive Demo'}
+                {language === 'hindi' ? 'सहायक' : 'Assistant'}
               </span>
             </div>
             <VoiceAssistant 
@@ -56,10 +55,10 @@ const Index = () => {
           </div>
           
           <div className="mt-4 text-center">
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-blue-300">
               {language === 'hindi' 
-                ? 'हमारी आवाज सहायक तकनीक का स्वयं अनुभव करें। प्रश्न पूछें, जानें कि यह कैसे काम करता है, या सुविधाओं का अन्वेषण करें।' 
-                : 'Experience our voice assistant technology firsthand. Ask questions, learn how it works, or explore features.'}
+                ? 'माइक पर क्लिक करके Ash से बात करें। Ash हिंदी और अंग्रेजी दोनों समझ सकता है।' 
+                : 'Click the microphone to talk with Ash. Ash understands both Hindi and English.'}
             </p>
           </div>
         </section>

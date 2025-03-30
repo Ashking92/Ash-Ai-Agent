@@ -9,7 +9,7 @@ interface MainLayoutProps {
 
 export const MainLayout = ({ children }: MainLayoutProps) => {
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-indigo-900 via-purple-900 to-pink-900">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-900 via-blue-950 to-slate-900">
       <Header />
       <main className="flex-grow pt-16">
         {children}
