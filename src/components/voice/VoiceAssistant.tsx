@@ -106,10 +106,19 @@ const VoiceAssistant = ({ agentId, apiKey, className }: VoiceAssistantProps) => 
     onError: (error) => {
       console.error('Error in conversation:', error);
       
-      // Fix for TS18047: Handle the case where error is null
-      const errorMessage = error && typeof error === 'object' && 'message' in error 
-        ? String((error as { message: unknown }).message) 
-        : 'An unexpected error occurred';
+      // Safely handle null error case
+      let errorMessage = 'An unexpected error occurred';
+      
+      if (error !== null) {
+        if (typeof error === 'object') {
+          if ('message' in error) {
+            const messageValue = (error as { message: unknown }).message;
+            errorMessage = messageValue ? String(messageValue) : errorMessage;
+          }
+        } else if (typeof error === 'string') {
+          errorMessage = error;
+        }
+      }
       
       setSubtitleText(`Error: ${errorMessage}`);
     }
@@ -132,6 +141,13 @@ const VoiceAssistant = ({ agentId, apiKey, className }: VoiceAssistantProps) => 
     }
   }, [conversation, agentId, isPoweredOn]);
 
+  // Auto-start conversation when powered on
+  useEffect(() => {
+    if (isPoweredOn && !isActive) {
+      startConversation();
+    }
+  }, [isPoweredOn, isActive, startConversation]);
+
   const stopConversation = useCallback(async () => {
     await conversation.endSession();
     setSubtitleText('Conversation ended');
@@ -147,6 +163,8 @@ const VoiceAssistant = ({ agentId, apiKey, className }: VoiceAssistantProps) => 
   const togglePower = useCallback(() => {
     if (isPoweredOn) {
       stopConversation();
+    } else {
+      setIsPoweredOn(true); // This will trigger the useEffect to start the conversation
     }
     setIsPoweredOn(!isPoweredOn);
   }, [isPoweredOn, stopConversation]);
