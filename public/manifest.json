@@ -1,12 +1,12 @@
 
 {
-  "name": "Elder Voice Link",
-  "short_name": "Voice Link",
-  "description": "Voice assistant platform for older adults",
+  "name": "Ash AI Assistant",
+  "short_name": "Ash",
+  "description": "AI voice assistant",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#000000",
-  "theme_color": "#84cc16",
+  "theme_color": "#000000",
   "orientation": "portrait",
   "icons": [
     {
@@ -20,6 +20,13 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/screenshot1.png",
+      "sizes": "1170x2532",
+      "type": "image/png"
     }
   ],
   "shortcuts": [

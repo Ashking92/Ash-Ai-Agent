@@ -14,7 +14,6 @@ interface VoiceAssistantProps {
   agentId: string;
   apiKey: string;
   className?: string;
-  language: 'english' | 'hindi';
 }
 
 const emotionEmojis: Record<string, string> = {
@@ -32,7 +31,7 @@ const getRandomEmotion = () => {
   return emotions[Math.floor(Math.random() * emotions.length)];
 };
 
-const VoiceAssistant = ({ agentId, apiKey, className, language = 'english' }: VoiceAssistantProps) => {
+const VoiceAssistant = ({ agentId, apiKey, className }: VoiceAssistantProps) => {
   const [subtitleText, setSubtitleText] = useState('');
   const [userMessage, setUserMessage] = useState('');
   const [chatHistory, setChatHistory] = useState<Message[]>([]);
@@ -40,20 +39,15 @@ const VoiceAssistant = ({ agentId, apiKey, className, language = 'english' }: Vo
   const [currentEmotion, setCurrentEmotion] = useState('neutral');
   const [isMuted, setIsMuted] = useState(false);
 
-  // Set language-based interface text
-  useEffect(() => {
-    setSubtitleText(language === 'hindi' ? 'बात करने के लिए माइक पर क्लिक करें' : 'Press the microphone to talk');
-  }, [language]);
-
   // Use the conversation hook from @11labs/react
   const conversation = useConversation({
     onConnect: () => {
       console.log('Connected to ElevenLabs');
-      setSubtitleText(language === 'hindi' ? 'कनेक्ट हो गया। आपके प्रश्न का इंतज़ार है...' : 'Connected. Waiting for your query...');
+      setSubtitleText('Ask me anything...');
     },
     onDisconnect: () => {
       console.log('Disconnected from ElevenLabs');
-      setSubtitleText(language === 'hindi' ? 'बातचीत समाप्त हुई' : 'Conversation ended');
+      setSubtitleText('Conversation ended');
       setStreamingText('');
     },
     onMessage: (message) => {
@@ -86,7 +80,7 @@ const VoiceAssistant = ({ agentId, apiKey, className, language = 'english' }: Vo
               }]);
             }
             
-            setSubtitleText(language === 'hindi' ? 'सुन रहा हूँ...' : 'Listening...');
+            setSubtitleText('Listening...');
           } 
           else if (typedMessage.type === 'agentResponseFinished') {
             // Add assistant response to chat history with emotion
@@ -101,7 +95,7 @@ const VoiceAssistant = ({ agentId, apiKey, className, language = 'english' }: Vo
             setStreamingText('');
             
             setTimeout(() => {
-              setSubtitleText(language === 'hindi' ? 'मैं और कैसे मदद कर सकता हूँ?' : 'What else can I help you with?');
+              setSubtitleText('What else can I help you with?');
             }, 1000);
           }
         } 
@@ -114,7 +108,7 @@ const VoiceAssistant = ({ agentId, apiKey, className, language = 'english' }: Vo
     },
     onError: (error) => {
       console.error('Error in conversation:', error);
-      setSubtitleText('Error: ' + (error && typeof error === 'object' && 'message' in error ? (error as any).message : (language === 'hindi' ? 'कोई त्रुटि हुई' : 'An error occurred')));
+      setSubtitleText('Error: ' + (error && typeof error === 'object' && 'message' in error ? (error as any).message : 'An error occurred'));
     }
   });
 
@@ -129,14 +123,14 @@ const VoiceAssistant = ({ agentId, apiKey, className, language = 'english' }: Vo
       console.log("Conversation started with agentId:", agentId);
     } catch (error) {
       console.error('Could not start the conversation:', error);
-      setSubtitleText(language === 'hindi' ? 'त्रुटि: माइक्रोफोन तक पहुंच नहीं मिल सकी' : 'Error: Could not access the microphone');
+      setSubtitleText('Error: Could not access the microphone');
     }
-  }, [conversation, agentId, language]);
+  }, [conversation, agentId]);
 
   const stopConversation = useCallback(async () => {
     await conversation.endSession();
-    setSubtitleText(language === 'hindi' ? 'बातचीत समाप्त हुई' : 'Conversation ended');
-  }, [conversation, language]);
+    setSubtitleText('Conversation ended');
+  }, [conversation]);
 
   const toggleMute = useCallback(() => {
     if (conversation.status === 'connected') {
@@ -147,119 +141,66 @@ const VoiceAssistant = ({ agentId, apiKey, className, language = 'english' }: Vo
 
   return (
     <div className={`voice-assistant-container flex flex-col items-center ${className || ''}`}>
-      <div className="w-full max-w-xl mx-auto flex flex-col items-center space-y-6 bg-black/90 rounded-xl p-6 shadow-lg border border-blue-500">
-        {/* AI Character with holographic effect */}
-        <div className="flex flex-col items-center justify-center mb-2">
-          <div className="relative">
-            <div className="absolute inset-0 rounded-full blur-lg bg-blue-500/30 animate-pulse"></div>
-            <div className="text-7xl mb-2 relative z-10">
-              {conversation.status === 'connected'
-                ? emotionEmojis[currentEmotion] || '🤖'
-                : '🤖'}
+      <div className="w-full max-w-xl mx-auto flex flex-col items-center min-h-[600px] bg-black/95 rounded-3xl overflow-hidden relative">
+        {/* Blue glowing circle similar to the reference */}
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-56 h-56 rounded-full border-2 border-blue-400/60 flex items-center justify-center">
+          <div className="absolute inset-0 rounded-full blur-md bg-blue-600/10"></div>
+          <div className="w-48 h-48 rounded-full border border-blue-400/40 flex items-center justify-center animate-pulse">
+            <div className="w-40 h-40 rounded-full border border-blue-300/30 flex items-center justify-center">
+              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-500/20 to-blue-600/10 backdrop-blur-sm flex items-center justify-center text-blue-300">
+                {streamingText ? (
+                  <div className="animate-pulse">{emotionEmojis[currentEmotion]}</div>
+                ) : null}
+              </div>
             </div>
           </div>
-          <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-300">
-            Ash
-          </h2>
-        </div>
-        
-        {/* Controls with futuristic styling */}
-        <div className="flex items-center justify-center gap-4">
-          {/* Microphone button with blue glow */}
-          <button 
-            className={`w-20 h-20 rounded-full flex items-center justify-center transition-all duration-300 
-              ${conversation.status === 'connected' 
-                ? 'bg-gradient-to-r from-red-500 to-pink-500' 
-                : 'bg-gradient-to-r from-blue-500 to-cyan-400'} 
-              text-white shadow-lg hover:scale-105 relative`}
-            onClick={conversation.status === 'connected' ? stopConversation : startConversation}
-            aria-label={conversation.status === 'connected' ? "Stop conversation" : "Start conversation"}
-          >
-            {/* Glow effect */}
-            <div className="absolute inset-0 rounded-full blur-md opacity-50 bg-blue-500 animate-pulse"></div>
-            
-            <div className="relative z-10">
-              {conversation.status === 'connected' ? <MicOff size={30} /> : <Mic size={30} />}
-            </div>
-          </button>
-          
-          {/* Volume control button */}
-          {conversation.status === 'connected' && (
-            <button 
-              className="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 
-                bg-gradient-to-r from-blue-400 to-cyan-400 text-white shadow-md hover:scale-105 relative"
-              onClick={toggleMute}
-              aria-label={isMuted ? "Unmute" : "Mute"}
-            >
-              <div className="absolute inset-0 rounded-full blur-sm opacity-40 bg-blue-500"></div>
-              <div className="relative z-10">
-                {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
-              </div>
-            </button>
-          )}
-        </div>
-        
-        {/* Current message/subtitle display with holographic styling */}
-        <div className="w-full text-center">
-          <p className="text-lg font-medium text-blue-100 py-2 px-4 rounded-lg bg-blue-900/50 border border-blue-500/50 shadow-inner">
-            {subtitleText || (language === 'hindi' ? 'बात करने के लिए माइक पर क्लिक करें' : 'Press the microphone to talk')}
-          </p>
         </div>
 
-        {/* Status indicators with updated styling */}
-        <div className="flex items-center justify-center space-x-6 text-sm mt-2">
-          <div className="flex items-center">
-            <span className={`w-2 h-2 rounded-full mr-2 ${conversation.status === 'connected' ? 'bg-cyan-500 animate-pulse' : 'bg-gray-500'}`}></span>
-            <span className="text-blue-100">
-              {language === 'hindi' ? 'आवाज़ ' + (conversation.status === 'connected' ? 'चालू' : 'बंद') : 'Voice ' + (conversation.status === 'connected' ? 'enabled' : 'disabled')}
-            </span>
-          </div>
-          <div className="flex items-center">
-            <span className="text-blue-100">AI powered</span>
+        {/* Header with back button */}
+        <div className="w-full p-4 flex items-center justify-between text-white">
+          <button className="p-2">
+            <Mic size={18} />
+          </button>
+          <div className="text-sm font-medium">Speaking to Ash</div>
+          <button className="p-2">
+            <span className="w-1 h-1 bg-white rounded-full mx-0.5 inline-block"></span>
+            <span className="w-1 h-1 bg-white rounded-full mx-0.5 inline-block"></span>
+            <span className="w-1 h-1 bg-white rounded-full mx-0.5 inline-block"></span>
+          </button>
+        </div>
+
+        {/* Current subtitle text */}
+        <div className="w-full p-4 text-center mt-auto mb-12">
+          <div className="text-white/90 text-sm font-light">
+            {subtitleText || 'Tap to speak'}
           </div>
         </div>
-        
-        {/* Chat history with futuristic display */}
-        {chatHistory.length > 0 && (
-          <div className="w-full bg-blue-900/30 rounded-lg p-4 mt-2 max-h-[250px] overflow-y-auto border border-blue-500/30 shadow-inner">
-            <div className="flex flex-col space-y-4">
-              {chatHistory.map((msg, index) => (
-                <div 
-                  key={index} 
-                  className={`px-3 py-2 rounded-lg ${
-                    msg.isUser 
-                      ? 'bg-gradient-to-r from-blue-900/70 to-blue-800/70 ml-auto' 
-                      : 'bg-gradient-to-r from-cyan-900/70 to-blue-900/70'
-                  } max-w-[80%] border ${msg.isUser ? 'border-blue-700/50' : 'border-cyan-700/50'} shadow-md`}
-                >
-                  {!msg.isUser && msg.emotion && (
-                    <div className="text-lg mb-1">{emotionEmojis[msg.emotion]}</div>
-                  )}
-                  <p className="text-blue-100">{msg.text}</p>
-                  <span className="text-xs text-blue-300">
-                    {msg.isUser 
-                      ? (language === 'hindi' ? 'आप' : 'You') 
-                      : 'Ash'} 
-                    · {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </span>
-                </div>
-              ))}
-            </div>
-            
-            {/* Streaming text display with emotion */}
-            {streamingText && (
-              <div className="px-3 py-2 rounded-lg bg-gradient-to-r from-cyan-900/70 to-blue-900/70 text-blue-100 mt-4 border border-cyan-700/50 shadow-md">
-                <div className="text-lg mb-1">{emotionEmojis[currentEmotion]}</div>
-                <p>{streamingText}</p>
-                <span className="text-xs text-blue-300">
-                  Ash · <span className="inline-block w-1 h-1 bg-blue-400 rounded-full animate-pulse mr-1"></span>
-                  <span className="inline-block w-1 h-1 bg-blue-400 rounded-full animate-pulse delay-75 mr-1"></span>
-                  <span className="inline-block w-1 h-1 bg-blue-400 rounded-full animate-pulse delay-150"></span>
-                </span>
-              </div>
-            )}
-          </div>
-        )}
+
+        {/* Microphone button */}
+        <div className="w-full p-4 flex items-center justify-center gap-6 mb-12">
+          <button 
+            className="w-14 h-14 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 border border-gray-700"
+            onClick={conversation.status === 'connected' ? stopConversation : startConversation}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="8" y="2" width="8" height="20" rx="2" ry="2" fill="currentColor" />
+            </svg>
+          </button>
+          <button 
+            className="w-18 h-18 rounded-full bg-gray-800 flex items-center justify-center text-white border border-gray-700"
+            onClick={conversation.status === 'connected' ? stopConversation : startConversation}
+          >
+            {conversation.status === 'connected' ? <MicOff size={30} /> : <Mic size={30} />}
+          </button>
+          <button 
+            className="w-14 h-14 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 border border-gray-700"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   );
