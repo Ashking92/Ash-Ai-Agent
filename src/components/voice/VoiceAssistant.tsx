@@ -1,4 +1,3 @@
-
 import { useCallback, useState, useEffect } from 'react';
 import { Mic, MicOff, Volume2, VolumeX, Power, X } from 'lucide-react';
 import { useConversation } from '@11labs/react';
@@ -110,11 +109,10 @@ const VoiceAssistant = ({ agentId, apiKey, className }: VoiceAssistantProps) => 
       // Safely handle null error case
       let errorMessage = 'An unexpected error occurred';
       
-      if (error !== null) {
+      if (error !== null && error !== undefined) {
         if (typeof error === 'object') {
-          if ('message' in error) {
-            const messageValue = (error as { message: unknown }).message;
-            errorMessage = messageValue ? String(messageValue) : errorMessage;
+          if ('message' in error && error.message) {
+            errorMessage = String(error.message);
           }
         } else if (typeof error === 'string') {
           errorMessage = error;

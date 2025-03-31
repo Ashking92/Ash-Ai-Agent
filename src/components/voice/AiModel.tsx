@@ -1,7 +1,7 @@
 
 import { useRef, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { useGLTF, OrbitControls, Environment } from '@react-three/drei';
+import { OrbitControls, Environment } from '@react-three/drei';
 import { Mesh, Group } from 'three';
 
 interface ModelProps {
@@ -59,7 +59,7 @@ function AIHead({ isSpeaking, emotion = 'neutral' }: ModelProps) {
       <mesh ref={meshRef}>
         <sphereGeometry args={[1, 32, 32]} />
         <meshStandardMaterial 
-          emissive={isSpeaking ? "#ffffff" : "#3498db"} 
+          color="#3498db"
           emissiveIntensity={isSpeaking ? 0.5 : 0.2}
           metalness={0.8}
           roughness={0.2}
@@ -70,10 +70,8 @@ function AIHead({ isSpeaking, emotion = 'neutral' }: ModelProps) {
       <mesh rotation={[Math.PI / 2, 0, 0]}>
         <torusGeometry args={[1.5, 0.05, 16, 100]} />
         <meshStandardMaterial 
-          color="#1a73e8" 
-          emissive="#1a73e8"
-          emissiveIntensity={0.5}
-          transparent
+          color="#1a73e8"
+          transparent={true}
           opacity={0.7}
         />
       </mesh>
@@ -83,9 +81,7 @@ function AIHead({ isSpeaking, emotion = 'neutral' }: ModelProps) {
         <torusGeometry args={[1.5, 0.05, 16, 100]} />
         <meshStandardMaterial 
           color="#34a0f2" 
-          emissive="#34a0f2"
-          emissiveIntensity={0.3}
-          transparent
+          transparent={true}
           opacity={0.5}
         />
       </mesh>
@@ -102,8 +98,7 @@ function AIHead({ isSpeaking, emotion = 'neutral' }: ModelProps) {
         >
           <sphereGeometry args={[0.05, 16, 16]} />
           <meshStandardMaterial 
-            color="#ffffff" 
-            emissive="#ffffff"
+            color="#ffffff"
             emissiveIntensity={isSpeaking ? 0.8 : 0.3}
           />
         </mesh>
