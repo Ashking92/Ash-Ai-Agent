@@ -10,13 +10,17 @@ const Index = () => {
   return (
     <MainLayout>
       <div className="flex flex-col items-center min-h-[100vh] justify-center py-0">
-        <section className="w-full max-w-md">
+        <div className="w-full max-w-2xl">
+          <h1 className="text-3xl font-bold mb-8 text-center text-blue-400">Ash AI Assistant</h1>
           <VoiceAssistant 
             agentId={agentId} 
             apiKey={apiKey} 
             className="p-0" 
           />
-        </section>
+          <p className="text-center text-gray-400 mt-8">
+            Powered by ElevenLabs AI Voice Technology
+          </p>
+        </div>
       </div>
     </MainLayout>
   );

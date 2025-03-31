@@ -3,6 +3,7 @@ import { useCallback, useState, useEffect } from 'react';
 import { Mic, MicOff, Volume2, VolumeX, Power, X } from 'lucide-react';
 import { useConversation } from '@11labs/react';
 import { Button } from '../ui/button';
+import AiModel from './AiModel';
 
 interface Message {
   text: string;
@@ -171,32 +172,26 @@ const VoiceAssistant = ({ agentId, apiKey, className }: VoiceAssistantProps) => 
 
   return (
     <div className={`voice-assistant-container flex flex-col items-center ${className || ''}`}>
-      <div className="w-full max-w-xl mx-auto flex flex-col items-center min-h-[600px] bg-black/95 rounded-3xl overflow-hidden relative">
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full border border-blue-400/30 flex items-center justify-center">
-          {isPoweredOn && (
-            <>
-              <div className={`w-64 h-64 rounded-full ${isActive ? 'bg-gradient-to-b from-blue-400/20 to-blue-600/50' : 'bg-blue-900/20'} flex items-center justify-center`}>
-                {conversation.isSpeaking ? (
-                  <div className="w-52 h-52 rounded-full bg-gradient-to-b from-blue-300 to-blue-600 animate-pulse flex items-center justify-center overflow-hidden">
-                    <div className="text-white text-center p-4 max-w-full overflow-hidden">
-                      {streamingText ? streamingText : subtitleText}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="w-52 h-52 rounded-full bg-gradient-to-b from-blue-400/40 to-blue-600/70 flex items-center justify-center overflow-hidden">
-                    <div className="text-white/90 text-center p-4 max-w-full overflow-hidden text-sm">
-                      {subtitleText || 'Tap to speak'}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </>
-          )}
-          {!isPoweredOn && (
-            <div className="w-52 h-52 rounded-full bg-gray-800/50 flex items-center justify-center">
-              <div className="text-gray-400">Powered Off</div>
+      <div className="w-full max-w-xl mx-auto flex flex-col items-center min-h-[600px] bg-gradient-to-b from-black/95 to-blue-950/90 rounded-3xl overflow-hidden relative">
+        {/* 3D AI Model */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          {isPoweredOn ? (
+            <div className="w-full h-[400px] p-4">
+              <AiModel 
+                isSpeaking={conversation.isSpeaking} 
+                emotion={currentEmotion}
+              />
             </div>
+          ) : (
+            <div className="text-gray-400 text-2xl">Powered Off</div>
           )}
+        </div>
+        
+        {/* Subtitles area */}
+        <div className="w-full absolute bottom-32 flex justify-center">
+          <div className="bg-black/50 backdrop-blur-sm rounded-xl px-6 py-3 text-center max-w-md">
+            <p className="text-white">{subtitleText}</p>
+          </div>
         </div>
 
         <div className="w-full p-4 flex items-center justify-center gap-5 mt-auto mb-12">
