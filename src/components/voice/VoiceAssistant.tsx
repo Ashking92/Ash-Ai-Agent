@@ -175,10 +175,10 @@ const VoiceAssistant = ({ agentId, apiKey, className }: VoiceAssistantProps) => 
   return (
     <div className={`voice-assistant-container flex flex-col items-center ${className || ''}`}>
       <div className="w-full max-w-xl mx-auto flex flex-col items-center min-h-[600px] bg-gradient-to-b from-black/95 to-blue-950/90 rounded-3xl overflow-hidden relative">
-        {/* 3D AI Model */}
-        <div className="absolute inset-0 flex items-center justify-center">
+        {/* 3D AI Model - enhanced visibility */}
+        <div className="absolute inset-0 flex items-center justify-center z-10">
           {isPoweredOn ? (
-            <div className="w-full h-[400px] p-4 z-10">
+            <div className="w-full h-[400px] p-4">
               <AiModel 
                 isSpeaking={conversation.isSpeaking} 
                 emotion={currentEmotion}
@@ -189,13 +189,14 @@ const VoiceAssistant = ({ agentId, apiKey, className }: VoiceAssistantProps) => 
           )}
         </div>
         
-        {/* Subtitles area */}
+        {/* Subtitles area - ensure it's above the model */}
         <div className="w-full absolute bottom-32 flex justify-center z-20">
           <div className="bg-black/50 backdrop-blur-sm rounded-xl px-6 py-3 text-center max-w-md">
             <p className="text-white">{subtitleText}</p>
           </div>
         </div>
 
+        {/* Controls - ensure they're above the model */}
         <div className="w-full p-4 flex items-center justify-center gap-5 mt-auto mb-12 z-20">
           <button 
             className="w-14 h-14 rounded-full bg-gray-800 flex items-center justify-center text-white border border-gray-700 hover:bg-gray-700 transition-colors"
