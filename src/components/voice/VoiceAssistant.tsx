@@ -1,4 +1,3 @@
-
 import { useCallback, useState, useEffect } from 'react';
 import { Mic, MicOff, Volume2, VolumeX, Power, X } from 'lucide-react';
 import { useConversation } from '@11labs/react';
@@ -107,7 +106,6 @@ const VoiceAssistant = ({ agentId, apiKey, className }: VoiceAssistantProps) => 
     onError: (error: unknown) => {
       console.error('Error in conversation:', error);
       
-      // Safe error handling with comprehensive null and type checks
       let errorMessage = 'An unexpected error occurred';
       
       if (error !== null && error !== undefined) {
@@ -144,7 +142,6 @@ const VoiceAssistant = ({ agentId, apiKey, className }: VoiceAssistantProps) => 
     }
   }, [conversation, agentId, isPoweredOn]);
 
-  // Auto-start conversation when powered on
   useEffect(() => {
     if (isPoweredOn && !isActive) {
       startConversation();
@@ -167,15 +164,14 @@ const VoiceAssistant = ({ agentId, apiKey, className }: VoiceAssistantProps) => 
     if (isPoweredOn) {
       stopConversation();
     } else {
-      setIsPoweredOn(true); // This will trigger the useEffect to start the conversation
+      setIsPoweredOn(true);
     }
     setIsPoweredOn(!isPoweredOn);
   }, [isPoweredOn, stopConversation]);
 
   return (
     <div className={`voice-assistant-container flex flex-col items-center ${className || ''}`}>
-      <div className="w-full max-w-xl mx-auto flex flex-col items-center min-h-[600px] bg-gradient-to-b from-black/95 to-blue-950/90 rounded-3xl overflow-hidden relative">
-        {/* 3D AI Model - enhanced visibility */}
+      <div className="w-full max-w-xl mx-auto flex flex-col items-center min-h-[600px] bg-gradient-to-b from-gray-900/95 to-blue-950/95 rounded-3xl overflow-hidden relative shadow-2xl border border-white/10">
         <div className="absolute inset-0 flex items-center justify-center z-10">
           {isPoweredOn ? (
             <div className="w-full h-[400px] p-4">
@@ -185,43 +181,46 @@ const VoiceAssistant = ({ agentId, apiKey, className }: VoiceAssistantProps) => 
               />
             </div>
           ) : (
-            <div className="text-gray-400 text-2xl">Powered Off</div>
+            <div className="flex flex-col items-center justify-center space-y-4 text-gray-400">
+              <div className="text-2xl font-light">System Offline</div>
+              <div className="w-12 h-12 rounded-full border-2 border-gray-500 flex items-center justify-center">
+                <Power size={24} className="text-gray-500" />
+              </div>
+            </div>
           )}
         </div>
         
-        {/* Subtitles area - ensure it's above the model */}
         <div className="w-full absolute bottom-32 flex justify-center z-20">
-          <div className="bg-black/50 backdrop-blur-sm rounded-xl px-6 py-3 text-center max-w-md">
-            <p className="text-white">{subtitleText}</p>
+          <div className="bg-black/60 backdrop-blur-lg rounded-xl px-6 py-3 text-center max-w-md shadow-lg border border-white/5">
+            <p className="text-white font-light">{subtitleText}</p>
           </div>
         </div>
 
-        {/* Controls - ensure they're above the model */}
-        <div className="w-full p-4 flex items-center justify-center gap-5 mt-auto mb-12 z-20">
+        <div className="w-full p-4 flex items-center justify-center gap-6 mt-auto mb-12 z-20">
           <button 
-            className="w-14 h-14 rounded-full bg-gray-800 flex items-center justify-center text-white border border-gray-700 hover:bg-gray-700 transition-colors"
+            className="w-14 h-14 rounded-full bg-gray-800/80 backdrop-blur-md flex items-center justify-center text-white border border-white/10 hover:bg-gray-700/80 transition-all shadow-lg transform hover:scale-105"
             onClick={togglePower}
             aria-label={isPoweredOn ? "Shut down" : "Power on"}
           >
-            <Power size={24} className={isPoweredOn ? "text-red-500" : "text-green-500"} />
+            <Power size={24} className={isPoweredOn ? "text-red-400" : "text-green-400"} />
           </button>
           
           <button 
-            className={`w-14 h-14 rounded-full bg-gray-800 flex items-center justify-center text-white border border-gray-700 hover:bg-gray-700 transition-colors ${!isPoweredOn ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className={`w-14 h-14 rounded-full bg-gray-800/80 backdrop-blur-md flex items-center justify-center text-white border border-white/10 hover:bg-gray-700/80 transition-all shadow-lg transform hover:scale-105 ${!isPoweredOn ? 'opacity-50 cursor-not-allowed' : ''}`}
             onClick={toggleMute}
             disabled={!isPoweredOn || conversation.status !== 'connected'}
             aria-label={isMuted ? "Unmute" : "Mute"}
           >
-            {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
+            {isMuted ? <VolumeX size={24} className="text-red-400" /> : <Volume2 size={24} className="text-blue-400" />}
           </button>
           
           <button 
-            className={`w-14 h-14 rounded-full bg-gray-800 flex items-center justify-center text-white border border-gray-700 hover:bg-gray-700 transition-colors ${!isPoweredOn || conversation.status !== 'connected' ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className={`w-14 h-14 rounded-full bg-gray-800/80 backdrop-blur-md flex items-center justify-center text-white border border-white/10 hover:bg-gray-700/80 transition-all shadow-lg transform hover:scale-105 ${!isPoweredOn || conversation.status !== 'connected' ? 'opacity-50 cursor-not-allowed' : ''}`}
             onClick={stopConversation}
             disabled={!isPoweredOn || conversation.status !== 'connected'}
             aria-label="End conversation"
           >
-            <X size={24} />
+            <X size={24} className="text-white/90" />
           </button>
         </div>
       </div>

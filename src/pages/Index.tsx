@@ -9,15 +9,15 @@ const Index = () => {
   
   return (
     <MainLayout>
-      <div className="flex flex-col items-center min-h-[100vh] justify-center py-0">
+      <div className="flex flex-col items-center min-h-[100vh] justify-center py-0 bg-gradient-to-b from-gray-900 to-black">
         <div className="w-full max-w-2xl">
-          <h1 className="text-3xl font-bold mb-8 text-center text-blue-400">Ash AI Assistant</h1>
+          <h1 className="text-3xl font-bold mb-8 text-center text-gradient bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-500">Ash AI Assistant</h1>
           <VoiceAssistant 
             agentId={agentId} 
             apiKey={apiKey} 
             className="p-0" 
           />
-          <p className="text-center text-gray-400 mt-8">
+          <p className="text-center text-gray-400 mt-8 text-sm">
             Powered by ElevenLabs AI Voice Technology
           </p>
         </div>
