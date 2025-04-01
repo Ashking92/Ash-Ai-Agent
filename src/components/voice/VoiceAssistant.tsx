@@ -111,9 +111,9 @@ const VoiceAssistant = ({ agentId, apiKey, className }: VoiceAssistantProps) => 
       let errorMessage = 'An unexpected error occurred';
       
       if (error) {
-        if (typeof error === 'object') {
-          if (error && 'message' in error && error.message) {
-            errorMessage = String(error.message);
+        if (typeof error === 'object' && error !== null) {
+          if ('message' in error && typeof error.message === 'string') {
+            errorMessage = error.message;
           }
         } else if (typeof error === 'string') {
           errorMessage = error;
