@@ -1,3 +1,4 @@
+
 import { useCallback, useState, useEffect } from 'react';
 import { Mic, MicOff, Volume2, VolumeX, Power, X } from 'lucide-react';
 import { useConversation } from '@11labs/react';
@@ -103,18 +104,19 @@ const VoiceAssistant = ({ agentId, apiKey, className }: VoiceAssistantProps) => 
         }
       }
     },
-    onError: (error) => {
+    onError: (error: unknown) => {
       console.error('Error in conversation:', error);
       
       // Safe error handling with comprehensive null and type checks
       let errorMessage = 'An unexpected error occurred';
       
-      if (error) {
+      if (error !== null && error !== undefined) {
         if (typeof error === 'object') {
-          if ('message' in error && error.message) {
-            errorMessage = String(error.message);
-          } else if ('toString' in error) {
-            errorMessage = error.toString();
+          const errorObj = error as Record<string, unknown>;
+          if (errorObj && 'message' in errorObj && errorObj.message) {
+            errorMessage = String(errorObj.message);
+          } else if (errorObj && 'toString' in errorObj && typeof errorObj.toString === 'function') {
+            errorMessage = errorObj.toString();
           }
         } else if (typeof error === 'string') {
           errorMessage = error;
@@ -176,7 +178,7 @@ const VoiceAssistant = ({ agentId, apiKey, className }: VoiceAssistantProps) => 
         {/* 3D AI Model */}
         <div className="absolute inset-0 flex items-center justify-center">
           {isPoweredOn ? (
-            <div className="w-full h-[400px] p-4">
+            <div className="w-full h-[400px] p-4 z-10">
               <AiModel 
                 isSpeaking={conversation.isSpeaking} 
                 emotion={currentEmotion}
@@ -188,13 +190,13 @@ const VoiceAssistant = ({ agentId, apiKey, className }: VoiceAssistantProps) => 
         </div>
         
         {/* Subtitles area */}
-        <div className="w-full absolute bottom-32 flex justify-center">
+        <div className="w-full absolute bottom-32 flex justify-center z-20">
           <div className="bg-black/50 backdrop-blur-sm rounded-xl px-6 py-3 text-center max-w-md">
             <p className="text-white">{subtitleText}</p>
           </div>
         </div>
 
-        <div className="w-full p-4 flex items-center justify-center gap-5 mt-auto mb-12">
+        <div className="w-full p-4 flex items-center justify-center gap-5 mt-auto mb-12 z-20">
           <button 
             className="w-14 h-14 rounded-full bg-gray-800 flex items-center justify-center text-white border border-gray-700 hover:bg-gray-700 transition-colors"
             onClick={togglePower}
